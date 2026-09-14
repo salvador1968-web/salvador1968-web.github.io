@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>A Minha Cidade — World</title>
+<style>
+:root{--bg:#0b0d10;--panel:#14171c;--line:#30353d;--text:#f2f3f5;--muted:#969da8;--accent:#d9ff54}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif;overflow:hidden}
+header{height:72px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:relative;z-index:10;background:#0b0d10ee}
+.logo{font-size:18px;font-weight:800;letter-spacing:.3px}.logo span{color:var(--accent)}.status{font-size:11px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase}
+.toolbar{position:absolute;top:92px;left:24px;z-index:5;display:flex;gap:7px;flex-wrap:wrap;max-width:520px}
+button{border:1px solid var(--line);background:#15181d;color:#dce0e5;border-radius:9px;padding:9px 12px;font-size:11px;cursor:pointer}
+button:hover,button.active{border-color:#69717d;background:#20242b;color:#fff}
+#world{position:absolute;left:0;right:0;top:72px;bottom:0;overflow:hidden;cursor:grab;background:#090c0f}
+#world.dragging{cursor:grabbing}
+#map{position:absolute;width:2200px;height:1500px;left:50%;top:50%;transform-origin:center center}
+.grid{position:absolute;inset:0;background-image:linear-gradient(#ffffff07 1px,transparent 1px),linear-gradient(90deg,#ffffff07 1px,transparent 1px);background-size:50px 50px}
+.ocean{position:absolute;inset:0;background:radial-gradient(circle at 50% 45%,#172128 0,#10171d 48%,#0a0d11 100%)}
+.land{position:absolute;border:1px solid #27333a;background:#17231f;box-shadow:inset 0 0 60px #0005}
+.l1{width:690px;height:390px;left:180px;top:260px;border-radius:46% 54% 42% 58%;transform:rotate(8deg)}
+.l2{width:500px;height:600px;left:750px;top:390px;border-radius:58% 42% 60% 40%;transform:rotate(-13deg)}
+.l3{width:720px;height:350px;left:1230px;top:230px;border-radius:52% 48% 58% 42%;transform:rotate(10deg)}
+.l4{width:380px;height:520px;left:1510px;top:700px;border-radius:45% 55% 50% 50%;transform:rotate(-7deg)}
+.city{position:absolute;transform:translate(-50%,-50%);z-index:3;text-align:center;cursor:pointer}
+.dot{width:18px;height:18px;border-radius:50%;background:#f5f6f7;box-shadow:0 0 0 8px #ffffff14,0 0 28px #ffffffaa;margin:auto}
+.city:hover .dot{background:var(--accent);box-shadow:0 0 0 11px #d9ff5422,0 0 34px #d9ff5488}
+.cityname{margin-top:9px;background:#101318e8;border:1px solid #39404a;padding:7px 10px;border-radius:8px;font-weight:700;font-size:12px;white-space:nowrap}
+.c1{left:820px;top:520px}.c2{left:1030px;top:680px}.c3{left:1480px;top:460px}.c4{left:1660px;top:850px}
+.relation{position:absolute;height:2px;background:#d9ff5470;transform-origin:left center;z-index:2}.r1{left:820px;top:520px;width:280px;transform:rotate(31deg)}.r2{left:1030px;top:680px;width:490px;transform:rotate(-25deg)}.r3{left:1480px;top:460px;width:430px;transform:rotate(43deg)}
+.hint{position:absolute;bottom:22px;left:24px;color:#69717b;font-size:10px;text-transform:uppercase;letter-spacing:1.3px;z-index:5}.zoom{position:absolute;right:24px;bottom:22px;z-index:5;display:flex;gap:6px}
+.modal{display:none;position:fixed;inset:0;background:#000b;z-index:20;align-items:center;justify-content:center;padding:20px}
+.panel{width:min(680px,95vw);max-height:86vh;overflow:auto;background:#15181d;border:1px solid #424953;border-radius:20px;padding:28px;box-shadow:0 30px 100px #000}
+.panel .close{float:right;font-size:22px;border:0;background:transparent;padding:0}.eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#858c96}.panel h2{font-size:40px;margin:7px 0}.panel h3{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:#858c96;margin:26px 0 10px}.panel p{color:#c1c6ce;line-height:1.55}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:9px}.mini{border:1px solid #303640;background:#1b1f25;padding:13px;border-radius:10px;font-size:12px}.tag{display:inline-block;border:1px solid #3a414a;border-radius:20px;padding:5px 8px;margin:3px;font-size:10px;color:#cbd0d6}.feed{display:flex;flex-direction:column;gap:8px}.feed div{padding:11px;background:#1b1f25;border-radius:9px;font-size:12px}.counter{position:absolute;right:24px;top:94px;z-index:5;color:#717985;font-size:10px;text-transform:uppercase;letter-spacing:1.2px}
+</style>
+</head>
+<body>
+<header><div class="logo">A MINHA CIDADE <span>/// WORLD</span></div><div class="status">protótipo · mundo em construção</div></header>
+
+<div class="toolbar">
+<button class="active" onclick="showLayer('all',this)">🌍 MUNDO</button>
+<button onclick="showLayer('cities',this)">● CIDADES</button>
+<button onclick="showLayer('relations',this)">↔ RELAÇÕES</button>
+<button onclick="openGlobal('equip',this)">🏗 EQUIPAMENTOS</button>
+<button onclick="openGlobal('events',this)">⚡ ACONTECIMENTOS</button>
+<button onclick="openGlobal('ideas',this)">💡 IDEIAS</button>
+</div>
+
+<div id="world">
+<div id="map">
+<div class="ocean"></div><div class="grid"></div>
+<div class="land l1"></div><div class="land l2"></div><div class="land l3"></div><div class="land l4"></div>
+<div class="relation r1" data-rel></div><div class="relation r2" data-rel></div><div class="relation r3" data-rel></div>
+<div class="city c1" onclick="openCity('LUMEN')"><div class="dot"></div><div class="cityname">LUMEN</div></div>
+<div class="city c2" onclick="openCity('NEXA')"><div class="dot"></div><div class="cityname">NEXA</div></div>
+<div class="city c3" onclick="openCity('VERA')"><div class="dot"></div><div class="cityname">VERA</div></div>
+<div class="city c4" onclick="openCity('ORBE')"><div class="dot"></div><div class="cityname">ORBE</div></div>
+</div>
+<div class="counter">4 cidades · 3 relações · mundo aberto</div>
+<div class="hint">arrastar para explorar · roda do rato para zoom · clicar numa cidade</div>
+<div class="zoom"><button onclick="zoom(-.15)">−</button><button onclick="resetView()">⌖</button><button onclick="zoom(.15)">+</button></div>
+</div>
+
+<div class="modal" id="modal" onclick="if(event.target===this)closeModal()">
+<div class="panel"><button class="close" onclick="closeModal()">×</button><div id="panelContent"></div></div>
+</div>
+
+<script>
+const cities={
+LUMEN:{author:"Ari · 9.º X",zone:"Zona 01",pop:"420 000",dna:"Tecnológica, cultural e compacta. Valoriza a mobilidade colectiva e os espaços de encontro.",equip:["Centro de Criação","Rede de Mobilidade Autónoma","Museu das Imagens"],rel:["🤝 parceria cultural com ORBE","🚆 ligação proposta a NEXA"],events:["Recebeu 12 000 novos habitantes.","Criou um novo bairro de uso misto."],ideas:["Praças que mudam de função ao longo do dia."]},
+NEXA:{author:"Noa · 9.º Y",zone:"Zona 02",pop:"280 000",dna:"Industrial e experimental. A cidade procura transformar produção em conhecimento.",equip:["Laboratório de Materiais","Fábrica Circular","Escola de Ofícios Futuros"],rel:["🚆 ligação proposta a LUMEN","⚡ acordo energético com VERA"],events:["A produção industrial aumentou 18%.","Foi lançada uma missão de redução de resíduos."],ideas:["Fábricas abertas à comunidade."]},
+VERA:{author:"Mika · 9.º X",zone:"Zona 03",pop:"190 000",dna:"Baixa emissão, muita água e grandes áreas verdes. A paisagem é parte da identidade.",equip:["Parque da Água","Estação Solar","Centro de Biodiversidade"],rel:["⚡ acordo energético com NEXA","💡 ideia adoptada por ORBE"],events:["Uma onda de calor obrigou a redesenhar os espaços públicos."],ideas:["Sistemas urbanos que recolhem e distribuem água da chuva."]},
+ORBE:{author:"Ivo · 9.º Z",zone:"Zona 04",pop:"350 000",dna:"Marítima e cultural. A cidade vive entre produção, turismo e investigação.",equip:["Museu Submerso","Terminal Flutuante","Oficina do Oceano"],rel:["🤝 parceria cultural com LUMEN","💡 adoptou uma ideia de VERA"],events:["Foi anunciado um grande festival internacional.","A zona costeira passou a ser protegida."],ideas:["Museu que também funciona como laboratório."]}
+};
+
+function openCity(n){
+const c=cities[n];
+document.getElementById('panelContent').innerHTML=
+`<div class="eyebrow">${c.zone} · ${c.pop} habitantes</div><h2>${n}</h2><div class="eyebrow">${c.author}</div>
+<h3>🧬 DNA DA CIDADE</h3><p>${c.dna}</p>
+<h3>🏗 O QUE JÁ FOI CONSTRUÍDO</h3><div class="cards">${c.equip.map(x=>`<div class="mini">🏗️ ${x}</div>`).join('')}</div>
+<h3>↔ RELAÇÕES</h3><div class="feed">${c.rel.map(x=>`<div>${x}</div>`).join('')}</div>
+<h3>⚡ HISTÓRIA RECENTE</h3><div class="feed">${c.events.map(x=>`<div>${x}</div>`).join('')}</div>
+<h3>💡 IDEIA DA CIDADE</h3><p>${c.ideas[0]}</p>
+<div>${["TECNOLOGIA","CULTURA","AMBIENTE","MOBILIDADE"].slice(0,2+(n.length%3)).map(x=>`<span class="tag">${x}</span>`).join('')}</div>`;
+document.getElementById('modal').style.display='flex';
+}
+function openGlobal(type){
+let title="",body="";
+if(type==="equip"){title="🏗 EQUIPAMENTOS";body=`<div class="cards">${Object.entries(cities).flatMap(([n,c])=>c.equip.map(e=>`<div class="mini"><b>${n}</b><br>🏗️ ${e}</div>`)).join('')}</div>`}
+if(type==="events"){title="⚡ ACONTECIMENTOS";body=`<div class="feed">${Object.entries(cities).flatMap(([n,c])=>c.events.map(e=>`<div><b>${n}</b> · ${e}</div>`)).join('')}</div>`}
+if(type==="ideas"){title="💡 IDEIAS EM CIRCULAÇÃO";body=`<p>Estas ideias podem viajar de uma cidade para outra.</p><div class="feed">${Object.entries(cities).flatMap(([n,c])=>c.ideas.map(e=>`<div>💡 <b>${n}</b> — ${e}</div>`)).join('')}</div>`}
+document.getElementById('panelContent').innerHTML=`<div class="eyebrow">MUNDO · VISÃO GLOBAL</div><h2>${title}</h2>${body}`;
+document.getElementById('modal').style.display='flex';
+}
+function closeModal(){document.getElementById('modal').style.display='none'}
+function showLayer(layer,btn){
+document.querySelectorAll('.toolbar button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+document.querySelectorAll('.city').forEach(x=>x.style.display=(layer==='relations'?'none':'block'));
+document.querySelectorAll('[data-rel]').forEach(x=>x.style.display=(layer==='cities'?'none':'block'));
+}
+let scale=1, x=0,y=0,drag=false,sx=0,sy=0;
+const map=document.getElementById('map'),world=document.getElementById('world');
+function render(){map.style.transform=`translate(calc(-50% + ${x}px),calc(-50% + ${y}px)) scale(${scale})`}
+function zoom(d){scale=Math.max(.55,Math.min(2.2,scale+d));render()}
+function resetView(){scale=1;x=0;y=0;render()}
+world.addEventListener('wheel',e=>{e.preventDefault();zoom(e.deltaY<0?.08:-.08)},{passive:false});
+world.addEventListener('mousedown',e=>{if(e.target.closest('.city,button'))return;drag=true;sx=e.clientX-x;sy=e.clientY-y;world.classList.add('dragging')});
+window.addEventListener('mousemove',e=>{if(!drag)return;x=e.clientX-sx;y=e.clientY-sy;render()});
+window.addEventListener('mouseup',()=>{drag=false;world.classList.remove('dragging')});
+render();
+</script>
+</body>
+</html>
