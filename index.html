@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Minha Cidade — World</title>
+<style>
+*{box-sizing:border-box} body{margin:0;font-family:Inter,Arial,sans-serif;background:#101216;color:#f4f4f2}
+header{padding:28px 5vw;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #303238}
+.logo{font-size:22px;font-weight:800;letter-spacing:-.5px}.tag{font-size:12px;color:#9da0aa;text-transform:uppercase;letter-spacing:2px}
+.hero{padding:55px 5vw 35px;max-width:1100px}.hero h1{font-size:clamp(42px,7vw,82px);line-height:.9;margin:0 0 20px;letter-spacing:-4px}.hero p{font-size:19px;color:#b8bac1;max-width:650px;line-height:1.5}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:25px}.stat{border:1px solid #34363d;border-radius:30px;padding:9px 15px;color:#c7c8cd;font-size:13px}
+.map{margin:10px 5vw 50px;min-height:510px;border:1px solid #35373e;border-radius:24px;overflow:hidden;position:relative;background:
+radial-gradient(circle at 30% 40%,#27302d 0 1px,transparent 2px),
+radial-gradient(circle at 70% 65%,#2d3038 0 1px,transparent 2px),
+linear-gradient(145deg,#15191a,#0c1015)}
+.grid{position:absolute;inset:0;background-image:linear-gradient(#ffffff08 1px,transparent 1px),linear-gradient(90deg,#ffffff08 1px,transparent 1px);background-size:55px 55px}
+.continent{position:absolute;background:#202b2b;border:1px solid #33403f;border-radius:45% 55% 50% 40%;opacity:.8}
+.eu{width:180px;height:110px;left:42%;top:29%;transform:rotate(-18deg)}.na{width:210px;height:150px;left:15%;top:22%;transform:rotate(20deg)}.sa{width:110px;height:190px;left:28%;top:51%;transform:rotate(15deg)}.as{width:260px;height:150px;left:55%;top:29%;transform:rotate(12deg)}.af{width:150px;height:190px;left:47%;top:48%;transform:rotate(-8deg)}
+.marker{position:absolute;transform:translate(-50%,-100%);cursor:pointer}.pin{width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 0 0 7px #ffffff18,0 0 25px #fff8}.label{margin-top:10px;background:#111318e8;border:1px solid #454750;border-radius:10px;padding:7px 10px;white-space:nowrap;font-size:12px}.m1{left:48%;top:38%}.m2{left:44%;top:47%}.m3{left:64%;top:37%}.m4{left:27%;top:38%}
+.instruction{position:absolute;left:20px;bottom:18px;color:#777b85;font-size:11px;text-transform:uppercase;letter-spacing:1.5px}
+section{padding:0 5vw 60px;max-width:1200px}.sectiontitle{font-size:12px;text-transform:uppercase;letter-spacing:2px;color:#858994;margin-bottom:18px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}.card{background:#191b20;border:1px solid #303239;border-radius:18px;padding:22px;cursor:pointer;transition:.2s}.card:hover{transform:translateY(-3px);border-color:#70737d}.cityname{font-size:24px;font-weight:750;margin:8px 0}.meta{font-size:13px;color:#999ca5;line-height:1.6}.chips{margin-top:15px;display:flex;gap:6px;flex-wrap:wrap}.chip{font-size:10px;border:1px solid #3a3c44;border-radius:20px;padding:5px 8px;color:#c5c7cc}.modal{display:none;position:fixed;inset:0;background:#000b;align-items:center;justify-content:center;padding:20px;z-index:5}.box{max-width:650px;width:100%;background:#181a1f;border:1px solid #42454d;border-radius:22px;padding:30px;box-shadow:0 20px 80px #000}.close{float:right;border:0;background:none;color:#aaa;font-size:25px;cursor:pointer}.box h2{font-size:40px;margin:5px 0 8px}.box h3{font-size:12px;text-transform:uppercase;letter-spacing:2px;color:#858994;margin-top:28px}.relations{display:flex;gap:8px;flex-wrap:wrap}.relation{padding:9px 12px;border-radius:10px;background:#22252c;font-size:12px;color:#ddd}
+footer{padding:30px 5vw;border-top:1px solid #303238;color:#777b84;font-size:12px}
+</style>
+</head>
+<body>
+<header><div class="logo">A MINHA CIDADE</div><div class="tag">WORLD · versão demonstração</div></header>
+<div class="hero">
+<h1>O mundo<br>que estamos a construir.</h1>
+<p>Este é o futuro <b>Site 03</b>: um mapa vivo onde as cidades dos alunos existem, evoluem, estabelecem relações, enfrentam problemas e partilham ideias.</p>
+<div class="stats"><div class="stat">4 cidades-exemplo</div><div class="stat">12 equipamentos</div><div class="stat">5 relações</div><div class="stat">3 acontecimentos</div></div>
+</div>
+
+<div class="map">
+<div class="grid"></div><div class="continent na"></div><div class="continent sa"></div><div class="continent eu"></div><div class="continent af"></div><div class="continent as"></div>
+<div class="marker m1" onclick="openCity('Aurora')"><div class="pin"></div><div class="label">AURORA</div></div>
+<div class="marker m2" onclick="openCity('Nexus')"><div class="pin"></div><div class="label">NEXUS</div></div>
+<div class="marker m3" onclick="openCity('Verde')"><div class="pin"></div><div class="label">VERDE</div></div>
+<div class="marker m4" onclick="openCity('Atlântica')"><div class="pin"></div><div class="label">ATLÂNTICA</div></div>
+<div class="instruction">clicar numa cidade para explorar</div>
+</div>
+
+<section>
+<div class="sectiontitle">As cidades</div>
+<div class="cards">
+<div class="card" onclick="openCity('Aurora')"><div>01</div><div class="cityname">Aurora</div><div class="meta">Lia · 9.º A<br>Portugal · 420 000 habitantes</div><div class="chips"><span class="chip">TECNOLOGIA</span><span class="chip">CULTURA</span><span class="chip">MOBILIDADE</span></div></div>
+<div class="card" onclick="openCity('Nexus')"><div>02</div><div class="cityname">Nexus</div><div class="meta">Miguel · 9.º B<br>Europa · 280 000 habitantes</div><div class="chips"><span class="chip">INDÚSTRIA</span><span class="chip">EDUCAÇÃO</span><span class="chip">INCLUSÃO</span></div></div>
+<div class="card" onclick="openCity('Verde')"><div>03</div><div class="cityname">Verde</div><div class="meta">Inês · 9.º A<br>América do Sul · 190 000 habitantes</div><div class="chips"><span class="chip">AMBIENTE</span><span class="chip">ENERGIA</span><span class="chip">ÁGUA</span></div></div>
+<div class="card" onclick="openCity('Atlântica')"><div>04</div><div class="cityname">Atlântica</div><div class="meta">Rui · 9.º C<br>Portugal · 350 000 habitantes</div><div class="chips"><span class="chip">MAR</span><span class="chip">TURISMO</span><span class="chip">CULTURA</span></div></div>
+</div>
+</section>
+
+<section>
+<div class="sectiontitle">O mundo está em movimento</div>
+<div class="cards">
+<div class="card"><div>🤝</div><div class="cityname">Alianças</div><div class="meta">Aurora + Atlântica · intercâmbio cultural</div></div>
+<div class="card"><div>⚡</div><div class="cityname">Desafios</div><div class="meta">Nexus · crise energética</div></div>
+<div class="card"><div>💡</div><div class="cityname">Ideias partilhadas</div><div class="meta">Verde · novo modelo de parque urbano</div></div>
+</div>
+</section>
+
+<footer>A MINHA CIDADE · Site 03 · protótipo para apresentação em sala de aula</footer>
+
+<div class="modal" id="modal" onclick="if(event.target===this)closeCity()"><div class="box"><button class="close" onclick="closeCity()">×</button><div id="content"></div></div></div>
+<script>
+const cities={
+'Aurora':{author:'Lia · 9.º A',loc:'Portugal',pop:'420 000',dna:'Tecnológica, cultural e orientada para a mobilidade sustentável.',equip:['Museu de Arte Contemporânea','Metro autónomo','Centro de Inovação'],rel:['🤝 Aliança cultural com Atlântica','💡 Ideia partilhada com Verde'],event:'Boom cultural: recebeu um grande festival internacional.'},
+'Nexus':{author:'Miguel · 9.º B',loc:'Europa',pop:'280 000',dna:'Industrial, inclusiva e centrada na educação e reconversão profissional.',equip:['Universidade Tecnológica','Fábrica circular','Centro de Formação'],rel:['⚡ Em negociação com Aurora'],event:'Crise energética: precisa reduzir o consumo em 30%.'},
+'Verde':{author:'Inês · 9.º A',loc:'América do Sul',pop:'190 000',dna:'Ecológica, de baixa emissão e baseada em energias renováveis.',equip:['Parque Metropolitano','Central Solar','Centro da Água'],rel:['💡 Inspirou Aurora com o seu modelo de parques'],event:'Onda de calor: a cidade tem de criar novas zonas de sombra.'},
+'Atlântica':{author:'Rui · 9.º C',loc:'Portugal',pop:'350 000',dna:'Marítima, turística e cultural, com forte relação com o oceano.',equip:['Museu do Mar','Porto de Passageiros','Centro de Investigação Oceânica'],rel:['🤝 Aliança cultural com Aurora','🚆 Proposta de ligação ferroviária a Nexus'],event:'20 000 novos habitantes chegam à cidade.'}
+};
+function openCity(n){let c=cities[n];document.getElementById('content').innerHTML=`<div class="sectiontitle">${c.loc} · ${c.pop} habitantes</div><h2>${n}</h2><div class="meta">${c.author}</div><h3>DNA DA CIDADE</h3><p>${c.dna}</p><h3>EQUIPAMENTOS</h3><div class="relations">${c.equip.map(x=>`<span class="relation">🏗️ ${x}</span>`).join('')}</div><h3>RELAÇÕES</h3><div class="relations">${c.rel.map(x=>`<span class="relation">${x}</span>`).join('')}</div><h3>ÚLTIMO ACONTECIMENTO</h3><p>🚨 ${c.event}</p>`;document.getElementById('modal').style.display='flex'}
+function closeCity(){document.getElementById('modal').style.display='none'}
+</script>
+</body>
+</html>
